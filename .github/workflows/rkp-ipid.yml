@@ -18,7 +18,7 @@ jobs:
         with:
           repository: openwrt/openwrt
           path: openwrt
-          ref: v23.05  # 建议使用稳定版本分支，降低兼容性问题
+          ref: v23.05.0  # 建议使用稳定版本分支，降低兼容性问题
 
       - name: 添加 rkp-ipid 软件包
         run: |
