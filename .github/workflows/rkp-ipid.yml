@@ -6,12 +6,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: 安装编译依赖
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential git flex bison gawk gettext
+
       - name: 克隆 OpenWrt 源码
         uses: actions/checkout@v4
         with:
           repository: openwrt/openwrt
           path: openwrt
-          ref: main  # 可指定 OpenWrt 版本分支，如 v23.05
+          ref: main  # 可指定稳定版本分支，如 v23.05
 
       - name: 添加 rkp-ipid 软件包
         run: |
@@ -21,21 +26,17 @@ jobs:
       - name: 配置编译选项
         run: |
           cd openwrt
-          # 配置目标为 GL-MT6000（MediaTek Filogic 830, aarch64_cortex-a53）
+          # 配置 GL-MT6000 目标（MediaTek Filogic 830, aarch64_cortex-a53）
           echo "CONFIG_TARGET_mediatek=y" >> .config
           echo "CONFIG_TARGET_mediatek_filogic=y" >> .config
           echo "CONFIG_TARGET_mediatek_filogic_GL-MT6000=y" >> .config
-          # 启用 rkp-ipid 内核模块
           echo "CONFIG_PACKAGE_kmod-rkp-ipid=y" >> .config
-          # 生成并更新配置
-          make defconfig
-          make menuconfig -e  # 可选：手动调整其他配置（如保留默认则无需此步）
+          make defconfig  # 生成默认配置
 
       - name: 编译 rkp-ipid 模块
         run: |
           cd openwrt
-          # 仅编译 rkp-ipid 相关包（加速编译）
-          make package/rkp-ipid/compile -j$(nproc) V=s
+          make package/rkp-ipid/compile -j$(nproc) V=s  # 详细输出编译过程
 
       - name: 上传编译产物
         uses: actions/upload-artifact@v4
