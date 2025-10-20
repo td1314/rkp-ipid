@@ -38,7 +38,7 @@ jobs:
           make package/rkp-ipid/compile -j$(nproc) V=s
 
       - name: 上传编译产物
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: kmod-rkp-ipid-gl-mt6000
           path: openwrt/bin/packages/aarch64_cortex-a53/base/kmod-rkp-ipid_*.ipk
